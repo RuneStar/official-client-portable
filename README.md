@@ -8,4 +8,4 @@ No installation. Saves all game files (cache, preferences, etc) to the current d
 	2. Include a self-contained copy of Java with the following steps:
 		1. Download compatible Java binaries to a subdirectory. Downloads: [**Oracle**](https://www.oracle.com/technetwork/java/javase/downloads/index.html), [**AdoptOpenJDK**](https://adoptopenjdk.net/nightly.html?variant=openjdk10), [**Zulu**](https://www.azul.com/downloads/zulu/)
 		2. Inside `client.*` scripts change the value of `_JAVA_COMMAND` to the new Java path such as `"jre-10.0.2\bin\java.exe"`
-3. Execute `client.bat` or `client.sh` to launch the client
+3. Execute `client.bat` or `client.command` to launch the client
