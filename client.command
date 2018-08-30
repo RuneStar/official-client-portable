@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
 _JAVA_COMMAND=java
 
-cd "$(dirname "$BASH_SOURCE")"
+cd "$(dirname "$0")"
 
 _DIR_BASENAME="$(basename "$(pwd)")"
 
@@ -18,6 +18,6 @@ $_JAVA_COMMAND -jar \
  -Duser.home=cache \
  -Dsun.awt.noerasebackground=true \
  -Dcom.jagex.configuri=jagex-jav://oldschool.runescape.com/jav_config.ws \
- jagexappletviewer.jar $_DIR_BASENAME
+ jagexappletviewer.jar "$_DIR_BASENAME"
 
 rm jagexappletviewer.jar
