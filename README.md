@@ -1,6 +1,4 @@
-No installation
-
-Saves all game files (cache, preferences, etc) to the current directory
+No installation. Saves all game files (cache, preferences, etc) to the current directory. Cross-platform
 
 ### Running
 
