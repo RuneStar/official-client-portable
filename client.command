@@ -4,13 +4,13 @@ set -e
 
 cd "$(dirname "$0")"
 
-_os="$(uname)"
+_os=$(uname | tr '[:upper:]' '[:lower:]')
 case $_os in
-	Darwin) _os=mac ;;
-	Msys*|CYGWIN*|MINGW*) _os=windows ;;
+	darwin) _os=mac ;;
+	msys*|cygwin*|mingw*) _os=windows ;;
 esac
 
-_arch="$(uname -m)"
+_arch=$(uname -m | tr '[:upper:]' '[:lower:]')
 case $_arch in
 	x86_64|amd64) _arch=x64 ;;
 	i386|i686) _arch=x32 ;;
@@ -28,8 +28,9 @@ if [ ! -d "$_jre_dir" ]; then
 		_temp_jdk_dir="temp-jdk-dir/"
 		unzip -d "$_temp_jdk_dir" "$_temp_jdk_dl"
 		cp -r "$_temp_jdk_dir/$(ls $_temp_jdk_dir)" "$_jdk_dir"
-		rm -rv "$_temp_jdk_dir"
+		rm -rfv "$_temp_jdk_dir"
 	else
+		mkdir -p "$_jdk_dir"
 		tar -zxf "$_temp_jdk_dl" --strip-components=2 -C "$_jdk_dir"
 	fi
 	
