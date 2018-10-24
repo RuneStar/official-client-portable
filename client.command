@@ -46,7 +46,7 @@ if [ ! -d "$_jre_dir" ]; then
 	 --add-modules java.desktop,java.management \
 	 --output "$_jre_dir"
 	 
-	rm -rv "$_jdk_dir"
+	rm -rfv "$_jdk_dir"
 fi
 
 "$_jre_dir/bin/java" --version
