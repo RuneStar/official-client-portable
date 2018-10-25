@@ -16,18 +16,26 @@ case $_arch in
 	i386|i686) _arch=x32 ;;
 esac
 
-_java_version="11"
+_platform="$_os-$_arch"
+case $_platform in
+	windows-x32) _java_version=8 ;;
+	windows-x64|mac-x64|linux-x64) _java_version=11 ;;
+	*)
+		echo "Unsupported platform: $_platform"
+		exit 1
+		;;
+esac
 
-_jre_dir="jre-$_java_version-$_os-$_arch/"
+_jre_dir="jre-$_java_version-$_platform/"
 
 if [ ! -d "$_jre_dir" ]; then
 	_temp_dir="temp/"
 	mkdir -p "$_temp_dir"
 	
-	_temp_jdk_archive="$_temp_dir/jdk-$_java_version-$_os-$_arch-archive"
+	_temp_jdk_archive="$_temp_dir/jdk-$_java_version-$_platform-archive"
 	curl -Lfo "$_temp_jdk_archive" "https://api.adoptopenjdk.net/v2/binary/releases/openjdk$_java_version?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=$_os&arch=$_arch"
 	
-	_temp_jdk_dir="$_temp_dir/jdk-$_java_version-$_os-$_arch/"
+	_temp_jdk_dir="$_temp_dir/jdk-$_java_version-$_platform/"
 	mkdir -p "$_temp_jdk_dir"
 	
 	if [ "$_os" = "windows" ]; then
