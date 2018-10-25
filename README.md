@@ -1,3 +1,5 @@
+[![Discord](https://img.shields.io/discord/384870460640329728.svg?logo=discord)](https://discord.gg/G2kxrnU)
+
 Portable Official Old School RuneScape Client with no installation, no dependencies, and works on any platform.
 Saves all game files including cache and preferences to the current directory.
 
