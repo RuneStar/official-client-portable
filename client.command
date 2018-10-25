@@ -38,13 +38,20 @@ if [ ! -d "$_jre_dir" ]; then
 	_temp_jdk_dir="$_temp_dir/jdk-$_java_version-$_platform/"
 	mkdir -p "$_temp_jdk_dir"
 	
-	if [ "$_os" = "windows" ]; then
-		unzip -d "$_temp_jdk_dir" "$_temp_jdk_archive"
-	else
-		tar -zxf "$_temp_jdk_archive" --strip-components=1 -C "$_temp_jdk_dir"
-	fi
-	
-	_jdk_home="$_temp_jdk_dir/$(ls $_temp_jdk_dir)"
+	case $_os in
+		windows)
+			unzip -d "$_temp_jdk_dir" "$_temp_jdk_archive"
+			_jdk_home="$_temp_jdk_dir/$(ls $_temp_jdk_dir)"
+			;;
+		linux)
+			tar -zxf "$_temp_jdk_archive" --strip-components=1 -C "$_temp_jdk_dir"
+			_jdk_home="$_temp_jdk_dir/$(ls $_temp_jdk_dir)"
+			;;
+		mac)
+			tar -zxf "$_temp_jdk_archive" --strip-components=1 -C "$_temp_jdk_dir"
+			_jdk_home="$_temp_jdk_dir/$(ls $_temp_jdk_dir)/Contents/Home"
+			;;
+	esac
 	
 	"$_jdk_home/bin/jlink" -v \
 	 --no-header-files \
