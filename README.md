@@ -9,7 +9,7 @@ Saves all game files including cache and preferences to the current directory.
 
 ### Download
 
-[**Download**](https://github.com/RuneStar/official-client-portable/archive/master.zip) project as `.zip` and extract to the desired location
+Download as [**.zip**](https://github.com/RuneStar/official-client-portable/archive/master.zip) or [**.tar.gz**](https://github.com/RuneStar/official-client-portable/archive/master.tar.gz) and extract to the desired location
 
 ### Running
 
