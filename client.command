@@ -39,7 +39,7 @@ if [ ! -d "$_jre_dir" ]; then
 	_jdk_home="$_temp_jdk_dir/$(ls $_temp_jdk_dir)"
 	
 	"$_jdk_home/bin/jlink" -v \
- 	 --no-header-files \
+	 --no-header-files \
 	 --no-man-pages \
 	 --strip-debug \
 	 --compress=2 \

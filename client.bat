@@ -5,9 +5,9 @@ cd "%~dp0"
 set _arch=x64
 set sys_32=%SYSTEMROOT%\system32
 if exist %sys_32%\reg.exe (
-    %sys_32%\reg query "HKLM\Hardware\Description\System\CentralProcessor\0" | %sys_32%\find /i "x86" > NUL && set arch_ext=x32
+	%sys_32%\reg query "HKLM\Hardware\Description\System\CentralProcessor\0" | %sys_32%\find /i "x86" > NUL && set arch_ext=x32
 ) else (
-    if "%PROCESSOR_ARCHITECTURE%" == "x86" set arch_ext=x32
+	if "%PROCESSOR_ARCHITECTURE%" == "x86" set arch_ext=x32
 )
 
 set _java_version=11
@@ -37,7 +37,7 @@ if not exist %_jre_dir%\ (
 	for /f %%i in ('dir /b %_temp_jdk_dir%') do set _jdk_home=%_temp_jdk_dir%\%%i\
 	
 	%_jdk_home%\bin\jlink -v^
- 	 --no-header-files^
+	 --no-header-files^
 	 --no-man-pages^
 	 --strip-debug^
 	 --compress=2^
