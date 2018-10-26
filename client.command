@@ -13,18 +13,24 @@ esac
 _arch=$(uname -m | tr '[:upper:]' '[:lower:]')
 case $_arch in
 	x86_64|amd64) _arch=x64 ;;
-	i386|i686) _arch=x32 ;;
+	x86|i[3456]86) _arch=x32 ;;
+	armv8*) _arch=aarch64 ;;
+	armv*) _arch=arm32 ;;
 esac
 
 _platform="$_os-$_arch"
 case $_platform in
+	windows-x64|mac-x64|linux-x64|linux-aarch64)
+		_java_version=11
+		_type=jdk
+		;;
+	linux-arm32)
+		_java_version=10
+		_type=jdk
+		;;
 	windows-x32)
 		_java_version=8
 		_type=jre
-		;;
-	windows-x64|mac-x64|linux-x64)
-		_java_version=11
-		_type=jdk
 		;;
 	*)
 		echo "Unsupported platform: $_platform"
