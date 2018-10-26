@@ -9,9 +9,8 @@ case $_os in
 	darwin) _os=mac ;;
 	msys*|cygwin*|mingw*) _os=windows ;;
 esac
-case $(uname -r) in
-	*Microsoft*) _os=windows ;;
-esac
+
+grep -q Microsoft /proc/version && _os=windows
 
 _arch=$(uname -m | tr '[:upper:]' '[:lower:]')
 case $_arch in
