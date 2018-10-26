@@ -10,7 +10,7 @@ case $_os in
 	msys*|cygwin*|mingw*) _os=windows ;;
 esac
 
-grep -q Microsoft /proc/version && _os=windows
+test -e /proc/version && grep -q Microsoft /proc/version && _os=windows
 
 _arch=$(uname -m | tr '[:upper:]' '[:lower:]')
 case $_arch in
