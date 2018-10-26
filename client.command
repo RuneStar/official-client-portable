@@ -9,6 +9,9 @@ case $_os in
 	darwin) _os=mac ;;
 	msys*|cygwin*|mingw*) _os=windows ;;
 esac
+case $(uname -r) in
+	*Microsoft*) _os=windows ;;
+esac
 
 _arch=$(uname -m | tr '[:upper:]' '[:lower:]')
 case $_arch in
@@ -36,6 +39,11 @@ case $_platform in
 		echo "Unsupported platform: $_platform"
 		exit 1
 		;;
+esac
+
+case $_os in
+	windows) _exe_extension=.exe ;;
+	*) _exe_extension= ;;
 esac
 
 _jre_dir="jre-$_java_version-$_platform/"
@@ -69,7 +77,7 @@ if [ ! -d "$_jre_dir" ]; then
 	
 	case $_type in
 		jdk)
-			"$_jdk_home/bin/jlink" -v \
+			"$_jdk_home/bin/jlink$_exe_extension" -v \
 			 --no-header-files \
 			 --no-man-pages \
 			 --strip-debug \
@@ -82,7 +90,7 @@ if [ ! -d "$_jre_dir" ]; then
 			cp -r "$_jdk_home" "$_jre_dir/"
 			;;
 	esac
-	 
+	
 	rm -rfv "$_temp_dir"
 fi
 
@@ -90,7 +98,7 @@ curl -fO http://www.runescape.com/downloads/jagexappletviewer.jar
 
 mkdir -p cache
 
-"$_jre_dir/bin/java" -jar \
+"$_jre_dir/bin/java$_exe_extension" -jar \
  -Duser.home=cache \
  -Dsun.awt.noerasebackground=true \
  -Dcom.jagex.configuri=jagex-jav://oldschool.runescape.com/jav_config.ws \
