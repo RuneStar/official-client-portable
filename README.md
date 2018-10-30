@@ -16,4 +16,4 @@ Download as [**.zip**](https://github.com/RuneStar/official-client-portable/arch
 
 ### Running
 
-Execute `client.bat` (Windows Batch file) or `client.command` (Shell script) to launch the client
+Execute `client.cmd` (Windows Batch file) or `client.command` (Shell script) to launch the client
