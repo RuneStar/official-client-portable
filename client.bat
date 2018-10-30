@@ -1,1 +1,0 @@
-@powershell -ExecutionPolicy Bypass -File client.ps1
