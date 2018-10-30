@@ -1,13 +1,15 @@
 [![Discord](https://img.shields.io/discord/384870460640329728.svg?logo=discord)](https://discord.gg/G2kxrnU)
 
-Portable Official Old School RuneScape Client with no installation, no dependencies, and works on any platform.
+Cross-platform portable official Old School RuneScape Client.
 Saves all game files including cache and preferences to the current directory.
 
 ### Requirements
 
 * Supported platforms: Windows x64, Windows x32, macOS x64, Linux x64, Linux aarch64, Linux arm32
+* Linux: `curl`, `tar`
+* Windows: PowerShell 3.0 (Windows 7 SP1+)
+
 * Downloads ~200 MB on first run, uses ~40 MB total disk space afterwards (Excluding game cache)
-* Linux only: `curl`, `tar`
 
 ### Download
 
