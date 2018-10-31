@@ -4,6 +4,17 @@ Set-StrictMode -Version 2.0
 $ProgressPreference = "SilentlyContinue"
 $ErrorActionPreference = "Stop"
 
+function Expand-Zip($Path, $DestinationPath) {
+	if (Get-Command Expand-Archive -ErrorAction SilentlyContinue) {
+		Expand-Archive -Verbose -Force -Path $Path -DestinationPath $DestinationPath
+	} else {
+		$shell = New-Object -COM Shell.Application
+		$target = $shell.NameSpace((Resolve-Path $DestinationPath).Path)
+		$zip = $shell.NameSpace((Resolve-Path $Path).Path)
+		$target.CopyHere($zip.Items(), 16)
+	}
+}
+
 trap {
 	$_
 	exit 1
@@ -34,10 +45,7 @@ if (!(Test-Path $_jre_dir)) {
 	$_temp_jdk_dir = Join-Path $_temp_dir $_java_type-$_java_version-windows-$_arch
 	New-Item -ItemType Directory -Path $_temp_jdk_dir -Force -Verbose | Out-Null
 	
-	$shell = New-Object -COM Shell.Application
-	$target = $shell.NameSpace((Resolve-Path $_temp_jdk_dir).Path)
-	$zip = $shell.NameSpace((Resolve-Path $_temp_jdk_archive).Path)
-	$target.CopyHere($zip.Items(), 16)
+	Expand-Zip -Path $_temp_jdk_archive -DestinationPath $_temp_jdk_dir
 	
 	$_jdk_home = Join-Path $_temp_jdk_dir * -Resolve
 	if ($_java_type -eq "jdk") {
