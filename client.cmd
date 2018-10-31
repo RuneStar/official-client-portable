@@ -1,1 +1,1 @@
-@powershell -ExecutionPolicy Bypass -File client.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0\client.ps1" || pause
