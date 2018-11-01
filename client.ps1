@@ -23,59 +23,59 @@ function Download-File($Uri, $OutFile) {
 }
 
 trap { Write-Error -ErrorRecord $_ -ErrorAction Continue ; exit 1 }
-$host.ui.RawUI.WindowTitle = "Old School RuneScape"
-[Net.ServicePointManager]::SecurityProtocol = [Enum]::ToObject([Net.SecurityProtocolType], 3072) # TLS 1.2
+$Host.ui.RawUI.WindowTitle = "Old School RuneScape"
 $ProgressPreference = 'SilentlyContinue'
 $ErrorActionPreference = 'Stop'
+[Net.ServicePointManager]::SecurityProtocol = [Enum]::ToObject([Net.SecurityProtocolType], 3072) # TLS 1.2
 $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
 
-$_java_version = 11
-if ($env:PROCESSOR_ARCHITECTURE -eq 'AMD64' -or $env:PROCESSOR_ARCHITEW6432 -eq 'AMD64') {
-	$_arch = 'x64'
+$java_version = 11
+if ($Env:PROCESSOR_ARCHITECTURE -eq 'AMD64' -or $Env:PROCESSOR_ARCHITEW6432 -eq 'AMD64') {
+	$arch = 'x64'
 } else {
-	$_arch = 'x32'
+	$arch = 'x32'
 }
 
-$_jre_dir = Join-Path $PSScriptRoot jre-$_java_version-windows-$_arch
-if (!(Test-Path $_jre_dir)) {
-	$_temp_dir = Join-Path $PSScriptRoot temp
-	New-Item -ItemType Directory -Path $_temp_dir -Force -Verbose | Out-Null
+$jre_dir = Join-Path $PSScriptRoot jre-$java_version-windows-$arch
+if (!(Test-Path $jre_dir)) {
+	$temp_dir = Join-Path $PSScriptRoot temp
+	New-Item -ItemType Directory -Path $temp_dir -Force -Verbose | Out-Null
 	
-	$_temp_jdk_archive = Join-Path $_temp_dir jdk-$_java_version-windows-$_arch.zip
-	if (!(Test-Path $_temp_jdk_archive)) {
-		Download-File -Uri "https://api.adoptopenjdk.net/v2/binary/nightly/openjdk$($_java_version)?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=windows&arch=$_arch" -OutFile $_temp_jdk_archive
+	$temp_jdk_archive = Join-Path $temp_dir jdk-$java_version-windows-$arch.zip
+	if (!(Test-Path $temp_jdk_archive)) {
+		Download-File -Uri "https://api.adoptopenjdk.net/v2/binary/nightly/openjdk$($java_version)?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=windows&arch=$arch" -OutFile $temp_jdk_archive
 	}
 	
-	$_temp_jdk_dir = Join-Path $_temp_dir jdk-$_java_version-windows-$_arch
-	Expand-Zip -Path $_temp_jdk_archive -DestinationPath $_temp_jdk_dir
-	$_jdk_home = Join-Path $_temp_jdk_dir * -Resolve
+	$temp_jdk_dir = Join-Path $temp_dir jdk-$java_version-windows-$arch
+	Expand-Zip -Path $temp_jdk_archive -DestinationPath $temp_jdk_dir
+	$temp_jdk_home = Join-Path $temp_jdk_dir * -Resolve
 	
-	& "$_jdk_home\bin\jlink" -v `
+	& "$temp_jdk_home\bin\jlink" -v `
 	 --no-header-files `
 	 --no-man-pages `
 	 --strip-debug `
 	 --compress=1 `
-	 --module-path "$_jdk_home\jmods" `
+	 --module-path "$temp_jdk_home\jmods" `
 	 --add-modules java.desktop,java.management `
-	 --output "$_jre_dir"
+	 --output "$jre_dir"
 	
-	if ($LastExitCode -ne 0) { exit $LastExitCode }
+	if ($LastExitCode) { exit $LastExitCode }
 	
-	Remove-Item $_temp_dir -Recurse
+	Remove-Item $temp_dir -Recurse
 }
 
-$_jar = Join-Path $PSScriptRoot jagexappletviewer.jar
-if (!(Test-Path $_jar)) {
-	Download-File -Uri http://www.runescape.com/downloads/jagexappletviewer.jar -OutFile $_jar
+$jar = Join-Path $PSScriptRoot jagexappletviewer.jar
+if (!(Test-Path $jar)) {
+	Download-File -Uri http://www.runescape.com/downloads/jagexappletviewer.jar -OutFile $jar
 }
 
-$_cache_dir = Join-Path $PSScriptRoot cache
-New-Item -ItemType Directory -Path $_cache_dir -Force -Verbose | Out-Null
+$cache_dir = Join-Path $PSScriptRoot cache
+New-Item -ItemType Directory -Path $cache_dir -Force -Verbose | Out-Null
 
-& "$_jre_dir\bin\java" -jar `
- "-Duser.home=$_cache_dir" `
+& "$jre_dir\bin\java" -jar `
+ "-Duser.home=$cache_dir" `
  "-Dsun.awt.noerasebackground=true" `
  "-Dcom.jagex.configuri=jagex-jav://oldschool.runescape.com/jav_config.ws" `
- "$_jar" "$((Get-Item $PSScriptRoot).Name)"
+ "$jar" "$((Get-Item $PSScriptRoot).Name)"
 
 exit $LastExitCode

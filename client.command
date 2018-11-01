@@ -1,77 +1,77 @@
 #!/bin/sh
 
-set -e
+set -eu
 
 cd "$(dirname "$0")"
 
-_os=$(uname | tr '[:upper:]' '[:lower:]')
-case $_os in
-	darwin) _os=mac ;;
-	msys*|cygwin*|mingw*) _os=windows ;;
+os=$(uname | tr '[:upper:]' '[:lower:]')
+case $os in
+	darwin) os=mac ;;
+	msys*|cygwin*|mingw*) os=windows ;;
 esac
 
-test -e /proc/version && grep -q Microsoft /proc/version && _os=windows
+test -e /proc/version && grep -q Microsoft /proc/version && os=windows
 
-_arch=$(uname -m | tr '[:upper:]' '[:lower:]')
-case $_arch in
-	x86_64|amd64) _arch=x64 ;;
-	x86|i[3456]86) _arch=x32 ;;
-	armv8*) _arch=aarch64 ;;
+arch=$(uname -m | tr '[:upper:]' '[:lower:]')
+case $arch in
+	x86_64|amd64) arch=x64 ;;
+	x86|i[3456]86) arch=x32 ;;
+	armv8*) arch=aarch64 ;;
 esac
 
-_java_version=11
-_platform="$_os-$_arch"
-case $_platform in
+java_version=11
+platform="$os-$arch"
+case $platform in
 	windows-x64|windows-x32|mac-x64|linux-x64|linux-aarch64) ;;
 	*)
-		echo "Unsupported platform: $_platform"
+		echo "Unsupported platform: $platform"
 		exit 1
 		;;
 esac
 
-case $_os in
-	windows) _exe_extension=.exe ;;
-	*) _exe_extension= ;;
+case $os in
+	windows) exe_extension=.exe ;;
+	*) exe_extension= ;;
 esac
 
-_jre_dir="jre-$_java_version-$_platform/"
+jre_dir="jre-$java_version-$platform/"
 
-if [ ! -d "$_jre_dir" ]; then
-	_temp_dir="temp/"
-	mkdir -p "$_temp_dir"
+if [ ! -d "$jre_dir" ]; then
+	temp_dir="temp/"
+	mkdir -p "$temp_dir"
 	
-	_temp_jdk_archive="$_temp_dir/jdk-$_java_version-$_platform-archive"
-	if [ ! -f "$_temp_jdk_archive" ]; then
-		curl -Lfo "$_temp_jdk_archive" "https://api.adoptopenjdk.net/v2/binary/nightly/openjdk$_java_version?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=$_os&arch=$_arch"
+	temp_jdk_archive="$temp_dir/jdk-$java_version-$platform-archive"
+	if [ ! -f "$temp_jdk_archive" ]; then
+		curl -Lfo "$temp_jdk_archive" "https://api.adoptopenjdk.net/v2/binary/nightly/openjdk$java_version?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=$os&arch=$arch"
 	fi
 
-	_temp_jdk_dir="$_temp_dir/jdk-$_java_version-$_platform/"
-	mkdir -p "$_temp_jdk_dir"
-	case $_os in
+	temp_jdk_dir="$temp_dir/jdk-$java_version-$platform/"
+	mkdir -p "$temp_jdk_dir"
+	case $os in
 		windows)
-			unzip -o "$_temp_jdk_archive" -d "$_temp_jdk_dir"
-			_jdk_home="$_temp_jdk_dir/$(ls $_temp_jdk_dir)"
+			unzip -o "$temp_jdk_archive" -d "$temp_jdk_dir"
+			temp_jdk_home="$temp_jdk_dir/$(ls $temp_jdk_dir)"
 			;;
 		linux)
-			tar -zxf "$_temp_jdk_archive" --strip-components=1 -C "$_temp_jdk_dir"
-			_jdk_home="$_temp_jdk_dir/$(ls $_temp_jdk_dir)"
+			tar -zxf "$temp_jdk_archive" --strip-components=1 -C "$temp_jdk_dir"
+			temp_jdk_home="$temp_jdk_dir/$(ls $temp_jdk_dir)"
 			;;
 		mac)
-			tar -zxf "$_temp_jdk_archive" --strip-components=1 -C "$_temp_jdk_dir"
-			_jdk_home="$_temp_jdk_dir/$(ls $_temp_jdk_dir)/Contents/Home"
+			tar -zxf "$temp_jdk_archive" --strip-components=1 -C "$temp_jdk_dir"
+			temp_jdk_home="$temp_jdk_dir/$(ls $temp_jdk_dir)/Contents/Home"
 			;;
 	esac
 	
-	"$_jdk_home/bin/jlink$_exe_extension" -v \
+	"$temp_jdk_home/bin/jlink$exe_extension" -v \
 	 --no-header-files \
 	 --no-man-pages \
 	 --strip-debug \
 	 --compress=1 \
-	 --module-path "$_jdk_home\jmods" \
+	 --module-path "$temp_jdk_home\jmods" \
 	 --add-modules java.desktop,java.management \
-	 --output "$_jre_dir"
+	 --output "$jre_dir"
 	
-	rm -rfv "$_temp_dir"
+	rm -rfv "$temp_dir"
 fi
 
 if [ ! -f "jagexappletviewer.jar" ]; then
@@ -80,7 +80,7 @@ fi
 
 mkdir -p cache
 
-"$_jre_dir/bin/java$_exe_extension" -jar \
+"$jre_dir/bin/java$exe_extension" -jar \
  -Duser.home=cache \
  -Dsun.awt.noerasebackground=true \
  -Dcom.jagex.configuri=jagex-jav://oldschool.runescape.com/jav_config.ws \
