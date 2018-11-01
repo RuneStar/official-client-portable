@@ -7,8 +7,8 @@ Saves all game files including cache and preferences to the current directory.
 
 * Supported platforms: Windows x64, Windows x32, macOS x64, Linux x64, Linux aarch64
 * Linux: `curl`, `tar`
-* Windows: PowerShell 2.0, .NET Framework 4.5
-* Downloads ~200 MB on first run, uses ~40 MB total disk space afterwards (Excluding game cache)
+* Windows: PowerShell 2.0 and .NET Framework 4.5 (Included in Windows 8+, available for Windows Vista+)
+* Downloads ~200 MB on first run, uses ~50 MB total disk space afterwards (Excluding game cache)
 
 ### Download
 
