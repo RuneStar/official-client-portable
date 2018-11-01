@@ -22,7 +22,7 @@ function Download-File($Uri, $OutFile) {
 	}
 }
 
-trap { $_ ; exit 1 }
+trap { Write-Error -ErrorRecord $_ -ErrorAction Continue ; exit 1 }
 $host.ui.RawUI.WindowTitle = "Old School RuneScape"
 [Net.ServicePointManager]::SecurityProtocol = [Enum]::ToObject([Net.SecurityProtocolType], 3072) # TLS 1.2
 $ProgressPreference = 'SilentlyContinue'
