@@ -48,10 +48,9 @@ if [ ! -d "$_jre_dir" ]; then
 
 	_temp_jdk_dir="$_temp_dir/jdk-$_java_version-$_platform/"
 	mkdir -p "$_temp_jdk_dir"
-	
 	case $_os in
 		windows)
-			unzip -d "$_temp_jdk_dir" "$_temp_jdk_archive"
+			unzip -o "$_temp_jdk_archive" -d "$_temp_jdk_dir"
 			_jdk_home="$_temp_jdk_dir/$(ls $_temp_jdk_dir)"
 			;;
 		linux)
@@ -76,7 +75,9 @@ if [ ! -d "$_jre_dir" ]; then
 	rm -rfv "$_temp_dir"
 fi
 
-curl -fO http://www.runescape.com/downloads/jagexappletviewer.jar
+if [ ! -f "jagexappletviewer.jar" ]; then
+	curl -fO http://www.runescape.com/downloads/jagexappletviewer.jar
+fi
 
 mkdir -p cache
 
@@ -85,5 +86,3 @@ mkdir -p cache
  -Dsun.awt.noerasebackground=true \
  -Dcom.jagex.configuri=jagex-jav://oldschool.runescape.com/jav_config.ws \
  jagexappletviewer.jar "$(basename "$(pwd)")"
-
-rm -v jagexappletviewer.jar

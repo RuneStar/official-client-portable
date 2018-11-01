@@ -5,6 +5,7 @@ function Expand-Zip($Path, $DestinationPath) {
 	if (Get-Command Expand-Archive -ErrorAction SilentlyContinue) {
 		Expand-Archive -Verbose -Force -Path $Path -DestinationPath $DestinationPath
 	} else {
+		New-Item -ItemType Directory -Path $DestinationPath -Force -Verbose | Out-Null
 		$shell = New-Object -COM Shell.Application
 		$target = $shell.NameSpace((Resolve-Path $DestinationPath).Path)
 		$zip = $shell.NameSpace((Resolve-Path $Path).Path)
@@ -22,6 +23,7 @@ function Download-File($Uri, $OutFile) {
 }
 
 trap { $_ ; exit 1 }
+$host.ui.RawUI.WindowTitle = "Old School RuneScape"
 [Net.ServicePointManager]::SecurityProtocol = [Enum]::ToObject([Net.SecurityProtocolType], 3072) # TLS 1.2
 $ProgressPreference = 'SilentlyContinue'
 $ErrorActionPreference = 'Stop'
@@ -35,22 +37,17 @@ if ($env:PROCESSOR_ARCHITECTURE -eq 'AMD64' -or $env:PROCESSOR_ARCHITEW6432 -eq 
 }
 
 $_jre_dir = Join-Path $PSScriptRoot jre-$_java_version-windows-$_arch
-
 if (!(Test-Path $_jre_dir)) {
 	$_temp_dir = Join-Path $PSScriptRoot temp
 	New-Item -ItemType Directory -Path $_temp_dir -Force -Verbose | Out-Null
 	
 	$_temp_jdk_archive = Join-Path $_temp_dir jdk-$_java_version-windows-$_arch.zip
-	
 	if (!(Test-Path $_temp_jdk_archive)) {
 		Download-File -Uri "https://api.adoptopenjdk.net/v2/binary/nightly/openjdk$($_java_version)?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=windows&arch=$_arch" -OutFile $_temp_jdk_archive
 	}
 	
 	$_temp_jdk_dir = Join-Path $_temp_dir jdk-$_java_version-windows-$_arch
-	New-Item -ItemType Directory -Path $_temp_jdk_dir -Force -Verbose | Out-Null
-	
 	Expand-Zip -Path $_temp_jdk_archive -DestinationPath $_temp_jdk_dir
-	
 	$_jdk_home = Join-Path $_temp_jdk_dir * -Resolve
 	
 	& "$_jdk_home\bin\jlink" -v `
@@ -68,7 +65,9 @@ if (!(Test-Path $_jre_dir)) {
 }
 
 $_jar = Join-Path $PSScriptRoot jagexappletviewer.jar
-Download-File -Uri http://www.runescape.com/downloads/jagexappletviewer.jar -OutFile $_jar
+if (!(Test-Path $_jar)) {
+	Download-File -Uri http://www.runescape.com/downloads/jagexappletviewer.jar -OutFile $_jar
+}
 
 $_cache_dir = Join-Path $PSScriptRoot cache
 New-Item -ItemType Directory -Path $_cache_dir -Force -Verbose | Out-Null
@@ -79,6 +78,4 @@ New-Item -ItemType Directory -Path $_cache_dir -Force -Verbose | Out-Null
  "-Dcom.jagex.configuri=jagex-jav://oldschool.runescape.com/jav_config.ws" `
  "$_jar" "$((Get-Item $PSScriptRoot).Name)"
 
-if ($LastExitCode -ne 0) { exit $LastExitCode }
- 
-Remove-Item $_jar -Verbose
+exit $LastExitCode
