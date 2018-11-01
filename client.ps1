@@ -1,8 +1,5 @@
-#Requires -Version 3.0
+#Requires -Version 2.0
 Set-StrictMode -Version 2.0
-[Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
-$ProgressPreference = "SilentlyContinue"
-$ErrorActionPreference = "Stop"
 
 function Expand-Zip($Path, $DestinationPath) {
 	if (Get-Command Expand-Archive -ErrorAction SilentlyContinue) {
@@ -15,19 +12,29 @@ function Expand-Zip($Path, $DestinationPath) {
 	}
 }
 
-trap {
-	$_
-	exit 1
+function Download-File($Uri, $OutFile) {
+	if (Get-Command Invoke-WebRequest -ErrorAction SilentlyContinue) {
+		Invoke-WebRequest -TimeoutSec 5 -Verbose -Uri $Uri -OutFile $OutFile
+	} else {
+		New-Item -ItemType File -Path $OutFile -Verbose | Out-Null
+		(New-Object System.Net.WebClient).DownloadFile($Uri, $OutFile)
+	}
 }
 
-if ([Environment]::Is64BitOperatingSystem) {
-	$_arch = "x64"
+trap { $_ ; exit 1 }
+[Net.ServicePointManager]::SecurityProtocol = [Enum]::ToObject([Net.SecurityProtocolType], 3072) # TLS 1.2
+$ProgressPreference = 'SilentlyContinue'
+$ErrorActionPreference = 'Stop'
+$PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
+
+if ($env:PROCESSOR_ARCHITECTURE -eq 'AMD64' -or $env:PROCESSOR_ARCHITEW6432 -eq 'AMD64') {
+	$_arch = 'x64'
 	$_java_version = 11
-	$_java_type = "jdk"
+	$_java_type = 'jdk'
 } else {
-	$_arch = "x32"
+	$_arch = 'x32'
 	$_java_version = 8
-	$_java_type = "jre"
+	$_java_type = 'jre'
 }
 
 $_jre_dir = Join-Path $PSScriptRoot jre-$_java_version-windows-$_arch
@@ -39,7 +46,7 @@ if (!(Test-Path $_jre_dir)) {
 	$_temp_jdk_archive = Join-Path $_temp_dir $_java_type-$_java_version-windows-$_arch.zip
 	
 	if (!(Test-Path $_temp_jdk_archive)) {
-		Invoke-WebRequest -TimeoutSec 5 -Verbose -OutFile $_temp_jdk_archive "https://api.adoptopenjdk.net/v2/binary/releases/openjdk$($_java_version)?openjdk_impl=hotspot&release=latest&type=$_java_type&heap_size=normal&os=windows&arch=$_arch"
+		Download-File -Uri "https://api.adoptopenjdk.net/v2/binary/releases/openjdk$($_java_version)?openjdk_impl=hotspot&release=latest&type=$_java_type&heap_size=normal&os=windows&arch=$_arch" -OutFile $_temp_jdk_archive
 	}
 	
 	$_temp_jdk_dir = Join-Path $_temp_dir $_java_type-$_java_version-windows-$_arch
@@ -48,7 +55,7 @@ if (!(Test-Path $_jre_dir)) {
 	Expand-Zip -Path $_temp_jdk_archive -DestinationPath $_temp_jdk_dir
 	
 	$_jdk_home = Join-Path $_temp_jdk_dir * -Resolve
-	if ($_java_type -eq "jdk") {
+	if ($_java_type -eq 'jdk') {
 		& "$_jdk_home\bin\jlink" -v `
 		 --no-header-files `
 		 --no-man-pages `
@@ -65,7 +72,7 @@ if (!(Test-Path $_jre_dir)) {
 }
 
 $_jar = Join-Path $PSScriptRoot jagexappletviewer.jar
-Invoke-WebRequest -TimeoutSec 5 -Verbose -OutFile $_jar http://www.runescape.com/downloads/jagexappletviewer.jar
+Download-File -Uri http://www.runescape.com/downloads/jagexappletviewer.jar -OutFile $_jar
 
 $_cache_dir = Join-Path $PSScriptRoot cache
 New-Item -ItemType Directory -Path $_cache_dir -Force -Verbose | Out-Null
