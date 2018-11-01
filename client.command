@@ -17,7 +17,6 @@ case $_arch in
 	x86_64|amd64) _arch=x64 ;;
 	x86|i[3456]86) _arch=x32 ;;
 	armv8*) _arch=aarch64 ;;
-	armv*) _arch=arm32 ;;
 esac
 
 _java_version=11
