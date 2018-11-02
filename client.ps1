@@ -30,11 +30,7 @@ $ErrorActionPreference = 'Stop'
 $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
 
 $java_version = 11
-if ($Env:PROCESSOR_ARCHITECTURE -eq 'AMD64' -or $Env:PROCESSOR_ARCHITEW6432 -eq 'AMD64') {
-	$arch = 'x64'
-} else {
-	$arch = 'x32'
-}
+$arch = if ($Env:PROCESSOR_ARCHITECTURE -eq 'AMD64' -or $Env:PROCESSOR_ARCHITEW6432 -eq 'AMD64') { 'x64' } else { 'x32' }
 
 $jre_dir = Join-Path $PSScriptRoot jre-$java_version-windows-$arch
 if (!(Test-Path $jre_dir)) {
