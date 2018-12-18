@@ -39,7 +39,7 @@ if (!(Test-Path $jre_dir)) {
 	
 	$temp_jdk_archive = Join-Path $temp_dir jdk-$java_version-windows-$arch.zip
 	if (!(Test-Path $temp_jdk_archive)) {
-		Download-File -Uri "https://api.adoptopenjdk.net/v2/binary/nightly/openjdk$($java_version)?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=windows&arch=$arch" -OutFile $temp_jdk_archive
+		Download-File -Uri "https://api.adoptopenjdk.net/v2/binary/releases/openjdk$($java_version)?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=windows&arch=$arch" -OutFile $temp_jdk_archive
 	}
 	
 	$temp_jdk_dir = Join-Path $temp_dir jdk-$java_version-windows-$arch

@@ -42,7 +42,7 @@ if [ ! -d "$jre_dir" ]; then
 	
 	temp_jdk_archive="$temp_dir/jdk-$java_version-$platform-archive"
 	if [ ! -f "$temp_jdk_archive" ]; then
-		curl -Lfo "$temp_jdk_archive" "https://api.adoptopenjdk.net/v2/binary/nightly/openjdk$java_version?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=$os&arch=$arch"
+		curl -Lfo "$temp_jdk_archive" "https://api.adoptopenjdk.net/v2/binary/releases/openjdk$java_version?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=$os&arch=$arch"
 	fi
 
 	temp_jdk_dir="$temp_dir/jdk-$java_version-$platform/"
