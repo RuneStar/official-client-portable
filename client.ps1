@@ -41,12 +41,13 @@ if (!(Test-Path $jre_dir)) {
 	if (!(Test-Path $temp_jdk_archive)) {
 		Download-File -Uri "https://api.adoptopenjdk.net/v2/binary/releases/openjdk$($java_version)?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=windows&arch=$arch" -OutFile $temp_jdk_archive
 	}
-	
+
 	$temp_jdk_dir = Join-Path $temp_dir jdk-$java_version-windows-$arch
 	Expand-Zip -Path $temp_jdk_archive -DestinationPath $temp_jdk_dir
 	$temp_jdk_home = Join-Path $temp_jdk_dir * -Resolve
-	
-	& "$temp_jdk_home\bin\jlink" -v `
+
+	& "$temp_jdk_home\bin\jlink" `
+	 --verbose `
 	 --no-header-files `
 	 --no-man-pages `
 	 --strip-debug `
@@ -54,9 +55,9 @@ if (!(Test-Path $jre_dir)) {
 	 --module-path "$temp_jdk_home\jmods" `
 	 --add-modules java.desktop,java.management `
 	 --output "$jre_dir"
-	
+
 	if ($LastExitCode) { exit $LastExitCode }
-	
+
 	Remove-Item $temp_dir -Recurse
 }
 
@@ -68,10 +69,11 @@ if (!(Test-Path $jar)) {
 $cache_dir = Join-Path $PSScriptRoot cache
 New-Item -ItemType Directory -Path $cache_dir -Force -Verbose | Out-Null
 
-& "$jre_dir\bin\java" -jar `
+& "$jre_dir\bin\java" `
  "-Duser.home=$cache_dir" `
  "-Dsun.awt.noerasebackground=true" `
  "-Dcom.jagex.configuri=jagex-jav://oldschool.runescape.com/jav_config.ws" `
- "$jar" "$((Get-Item $PSScriptRoot).Name)"
+ -jar "$jar" `
+ "$((Get-Item $PSScriptRoot).Name)"
 
 exit $LastExitCode
