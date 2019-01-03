@@ -4,7 +4,8 @@ set -eu
 
 cd "$(dirname "$0")"
 
-if grep Microsoft /proc/version > /dev/null 2>&1; then
+if grep Microsoft /proc/version > /dev/null 2>&1
+then
 	os=windows
 else
 	os=$(uname | tr '[:upper:]' '[:lower:]')
@@ -22,6 +23,7 @@ case $arch in
 esac
 
 java_version=11
+
 platform="$os-$arch"
 case $platform in
 	windows-x64|windows-x32|mac-x64|linux-x64|linux-aarch64) ;;
@@ -38,12 +40,14 @@ esac
 
 jre_dir="jre-$java_version-$platform/"
 
-if [ ! -d "$jre_dir" ]; then
+if test ! -d "$jre_dir"
+then
 	temp_dir="temp/"
 	mkdir -p "$temp_dir"
 	
 	temp_jdk_archive="$temp_dir/jdk-$java_version-$platform-archive"
-	if [ ! -f "$temp_jdk_archive" ]; then
+	if test ! -f "$temp_jdk_archive"
+	then
 		curl -Lfo "$temp_jdk_archive" "https://api.adoptopenjdk.net/v2/binary/releases/openjdk$java_version?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=$os&arch=$arch"
 	fi
 
@@ -64,7 +68,8 @@ if [ ! -d "$jre_dir" ]; then
 			;;
 	esac
 
-	"$temp_jdk_home/bin/jlink$exe_extension" -v \
+	"$temp_jdk_home/bin/jlink$exe_extension" \
+	 --verbose \
 	 --no-header-files \
 	 --no-man-pages \
 	 --strip-debug \
@@ -76,17 +81,20 @@ if [ ! -d "$jre_dir" ]; then
 	rm -rfv "$temp_dir"
 fi
 
-if [ ! -f "jagexappletviewer.jar" ]; then
+if test ! -f "jagexappletviewer.jar"
+then
 	curl -fO http://www.runescape.com/downloads/jagexappletviewer.jar
-	if [ "$os" = "mac" ]; then
+	if test "$os" = "mac"
+	then
 		zip --delete jagexappletviewer.jar "MacOSXHelpers.class"
 	fi
 fi
 
 mkdir -p cache
 
-"$jre_dir/bin/java$exe_extension" -jar \
+"$jre_dir/bin/java$exe_extension" \
  -Duser.home=cache \
  -Dsun.awt.noerasebackground=true \
  -Dcom.jagex.configuri=jagex-jav://oldschool.runescape.com/jav_config.ws \
- jagexappletviewer.jar "$(basename "$(pwd)")"
+ -jar jagexappletviewer.jar \
+ "$(basename "$(pwd)")"
