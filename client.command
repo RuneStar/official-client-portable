@@ -56,7 +56,7 @@ if [ ! -d "$jre_dir" ]; then
 			;;
 		linux)
 			tar -zxf "$temp_jdk_archive" --strip-components=1 -C "$temp_jdk_dir"
-			temp_jdk_home="$temp_jdk_dir/$(ls $temp_jdk_dir)"
+			temp_jdk_home="$temp_jdk_dir"
 			;;
 		mac)
 			tar -zxf "$temp_jdk_archive" --strip-components=1 -C "$temp_jdk_dir"
