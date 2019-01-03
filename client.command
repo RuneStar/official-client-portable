@@ -4,13 +4,15 @@ set -eu
 
 cd "$(dirname "$0")"
 
-os=$(uname | tr '[:upper:]' '[:lower:]')
-case $os in
-	darwin) os=mac ;;
-	msys*|cygwin*|mingw*) os=windows ;;
-esac
-
-test -e /proc/version && grep -q Microsoft /proc/version && os=windows
+if grep Microsoft /proc/version > /dev/null 2>&1; then
+	os=windows
+else
+	os=$(uname | tr '[:upper:]' '[:lower:]')
+	case $os in
+		darwin) os=mac ;;
+		msys*|cygwin*|mingw*) os=windows ;;
+	esac
+fi
 
 arch=$(uname -m | tr '[:upper:]' '[:lower:]')
 case $arch in
@@ -61,7 +63,7 @@ if [ ! -d "$jre_dir" ]; then
 			temp_jdk_home="$temp_jdk_dir/$(ls $temp_jdk_dir)/Contents/Home"
 			;;
 	esac
-	
+
 	"$temp_jdk_home/bin/jlink$exe_extension" -v \
 	 --no-header-files \
 	 --no-man-pages \
@@ -70,7 +72,7 @@ if [ ! -d "$jre_dir" ]; then
 	 --module-path "$temp_jdk_home\jmods" \
 	 --add-modules java.desktop,java.management \
 	 --output "$jre_dir"
-	
+
 	rm -rfv "$temp_dir"
 fi
 
