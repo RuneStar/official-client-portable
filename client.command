@@ -22,8 +22,6 @@ case $arch in
 	armv8*) arch=aarch64 ;;
 esac
 
-java_version=11
-
 platform="$os-$arch"
 case $platform in
 	windows-x64|windows-x32|mac-x64|linux-x64|linux-aarch64) ;;
@@ -34,9 +32,17 @@ case $platform in
 esac
 
 case $os in
-	windows) exe_extension=.exe ;;
-	*) exe_extension= ;;
+	windows)
+		exe_extension=.exe
+		archive_extension=.zip
+		;;
+	*)
+		exe_extension=
+		archive_extension=.tar.gz
+		;;
 esac
+
+java_version=11
 
 jre_dir="jre-$java_version-$platform/"
 
@@ -45,7 +51,7 @@ then
 	temp_dir="temp/"
 	mkdir -p "$temp_dir"
 	
-	temp_jdk_archive="$temp_dir/jdk-$java_version-$platform-archive"
+	temp_jdk_archive="$temp_dir/jdk-$java_version-$platform$archive_extension"
 	if test ! -f "$temp_jdk_archive"
 	then
 		curl -Lfo "$temp_jdk_archive" "https://api.adoptopenjdk.net/v2/binary/releases/openjdk$java_version?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=$os&arch=$arch"
