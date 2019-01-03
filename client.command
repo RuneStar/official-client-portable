@@ -78,6 +78,9 @@ fi
 
 if [ ! -f "jagexappletviewer.jar" ]; then
 	curl -fO http://www.runescape.com/downloads/jagexappletviewer.jar
+	if [ "$os" = "mac" ]; then
+		zip --delete jagexappletviewer.jar "MacOSXHelpers.class"
+	fi
 fi
 
 mkdir -p cache
