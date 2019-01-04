@@ -2,9 +2,18 @@
 
 set -eu
 
+download_file() {
+	if type curl >/dev/null 2>&1
+	then
+		curl -Lfo "$@"
+	else
+		wget -O "$@"
+	fi
+}
+
 cd "$(dirname "$0")"
 
-if grep Microsoft /proc/version > /dev/null 2>&1
+if grep Microsoft /proc/version >/dev/null 2>&1
 then
 	os=windows
 else
@@ -26,7 +35,7 @@ platform="$os-$arch"
 case $platform in
 	windows-x64|windows-x32|mac-x64|linux-x64|linux-aarch64) ;;
 	*)
-		printf "Unsupported platform: %s" "$platform"
+		printf "Unsupported platform: %s\n" "$platform"
 		exit 1
 		;;
 esac
@@ -54,7 +63,7 @@ then
 	temp_jdk_archive="$temp_dir/jdk-$java_version-$platform$archive_extension"
 	if test ! -f "$temp_jdk_archive"
 	then
-		curl -Lfo "$temp_jdk_archive" "https://api.adoptopenjdk.net/v2/binary/releases/openjdk$java_version?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=$os&arch=$arch"
+		download_file "$temp_jdk_archive" "https://api.adoptopenjdk.net/v2/binary/releases/openjdk$java_version?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=$os&arch=$arch"
 	fi
 
 	temp_jdk_dir="$temp_dir/jdk-$java_version-$platform/"
@@ -89,7 +98,7 @@ fi
 
 if test ! -f "jagexappletviewer.jar"
 then
-	curl -fO http://www.runescape.com/downloads/jagexappletviewer.jar
+	download_file jagexappletviewer.jar http://www.runescape.com/downloads/jagexappletviewer.jar
 	if test "$os" = "mac"
 	then
 		zip --delete jagexappletviewer.jar "MacOSXHelpers.class"
