@@ -63,7 +63,7 @@ then
 	temp_jdk_archive="$temp_dir/jdk-$java_version-$platform$archive_extension"
 	if test ! -f "$temp_jdk_archive"
 	then
-		download_file "$temp_jdk_archive" "https://api.adoptopenjdk.net/v2/binary/releases/openjdk$java_version?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=$os&arch=$arch"
+		download_file "$temp_jdk_archive" "https://api.adoptopenjdk.net/v2/binary/nightly/openjdk$java_version?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=$os&arch=$arch"
 	fi
 
 	temp_jdk_dir="$temp_dir/jdk-$java_version-$platform/"
@@ -79,7 +79,7 @@ then
 			;;
 		mac)
 			tar -zxf "$temp_jdk_archive" --strip-components=1 -C "$temp_jdk_dir"
-			temp_jdk_home="$temp_jdk_dir/$(ls $temp_jdk_dir)/Contents/Home"
+			temp_jdk_home="$temp_jdk_dir/Contents/Home"
 			;;
 	esac
 
