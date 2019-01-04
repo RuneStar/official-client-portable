@@ -26,7 +26,7 @@ platform="$os-$arch"
 case $platform in
 	windows-x64|windows-x32|mac-x64|linux-x64|linux-aarch64) ;;
 	*)
-		echo "Unsupported platform: $platform"
+		printf "Unsupported platform: %s" "$platform"
 		exit 1
 		;;
 esac
