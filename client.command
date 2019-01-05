@@ -96,13 +96,14 @@ then
 	rm -rfv "$temp_dir"
 fi
 
-if test ! -f "jagexappletviewer.jar"
+if test ! -f jagexappletviewer.jar
 then
 	download_file jagexappletviewer.jar http://www.runescape.com/downloads/jagexappletviewer.jar
-	if test "$os" = "mac"
-	then
-		zip --delete jagexappletviewer.jar "MacOSXHelpers.class"
-	fi
+fi
+
+if test "$os" = mac
+then
+	zip -d jagexappletviewer.jar MacOSXHelpers.class || true
 fi
 
 mkdir -p cache
