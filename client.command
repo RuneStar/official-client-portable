@@ -3,7 +3,7 @@
 set -eu
 
 download_file() {
-	if type curl >/dev/null 2>&1
+	if curl -V >/dev/null 2>&1
 	then
 		curl -Lfo "$@"
 	else
