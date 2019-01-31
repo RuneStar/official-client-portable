@@ -3,7 +3,7 @@
 set -eu
 
 download_file() {
-	if curl -V >/dev/null 2>&1
+	if command -v curl >/dev/null
 	then
 		curl -Lfo "$@"
 	else
@@ -35,7 +35,7 @@ platform="$os-$arch"
 case $platform in
 	windows-x64|windows-x32|mac-x64|linux-x64|linux-aarch64) ;;
 	*)
-		printf "Unsupported platform: %s\n" "$platform"
+		echo "Unsupported platform: $platform"
 		exit 1
 		;;
 esac
