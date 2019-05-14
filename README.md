@@ -5,7 +5,7 @@ Saves all game files including cache and preferences to the current directory.
 
 ### Requirements
 
-* Supported platforms: Windows x64, Windows x32, macOS x64, Linux x64, Linux aarch64
+* Supported platforms: Windows x64, Windows x32, macOS x64, Linux x64, Linux aarch64, Linux arm32
 * Downloads ~200 MB on first run, uses ~50 MB total disk space afterwards (Excluding game cache)
 
 ### Download

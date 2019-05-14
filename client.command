@@ -29,11 +29,12 @@ case $arch in
 	x86_64|amd64) arch=x64 ;;
 	x86|i[3456]86) arch=x32 ;;
 	armv8*) arch=aarch64 ;;
+	armv*) arch=arm ;;
 esac
 
 platform="$os-$arch"
 case $platform in
-	windows-x64|windows-x32|mac-x64|linux-x64|linux-aarch64) ;;
+	windows-x64|windows-x32|mac-x64|linux-x64|linux-aarch64|linux-arm) ;;
 	*)
 		echo "Unsupported platform: $platform"
 		exit 1
