@@ -97,16 +97,6 @@ then
 	rm -rfv "$temp_dir"
 fi
 
-if test ! -f jagexappletviewer.jar
-then
-	download_file jagexappletviewer.jar http://www.runescape.com/downloads/jagexappletviewer.jar
-fi
-
-if test "$os" = mac
-then
-	zip -d jagexappletviewer.jar MacOSXHelpers.class || true
-fi
-
 mkdir -p cache
 
 "$jre_dir/bin/java$exe_extension" \

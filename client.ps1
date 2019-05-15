@@ -62,9 +62,6 @@ if (!(Test-Path $jre_dir)) {
 }
 
 $jar = Join-Path $PSScriptRoot jagexappletviewer.jar
-if (!(Test-Path $jar)) {
-	Download-File -Uri http://www.runescape.com/downloads/jagexappletviewer.jar -OutFile $jar
-}
 
 $cache_dir = Join-Path $PSScriptRoot cache
 New-Item -ItemType Directory -Path $cache_dir -Force -Verbose | Out-Null
