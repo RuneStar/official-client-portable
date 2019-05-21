@@ -104,4 +104,4 @@ mkdir -p cache
  -Dsun.awt.noerasebackground=true \
  -Dcom.jagex.configuri=jagex-jav://oldschool.runescape.com/jav_config.ws \
  -jar jagexappletviewer.jar \
- "$(basename "$(pwd)")"
+ "$(basename "$PWD")"
