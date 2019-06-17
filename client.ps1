@@ -51,7 +51,7 @@ if (!(Test-Path $jre_dir)) {
 	 --no-header-files `
 	 --no-man-pages `
 	 --strip-debug `
-	 --compress=1 `
+	 --compress=2 `
 	 --module-path "$temp_jdk_home\jmods" `
 	 --add-modules java.desktop,java.management `
 	 --output "$jre_dir"
