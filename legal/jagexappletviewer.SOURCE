@@ -1,5 +1,1 @@
-curl -O https://www.runescape.com/downloads/OldSchool.msi
-cmd.exe /c "msiexec /a OldSchool.msi /qn TARGETDIR=%cd%\msi"
-cp msi/jagexlauncher/jagexlauncher/bin/jagexappletviewer.jar jagexappletviewer.jar
-cp msi/jagexlauncher/jagexlauncher/oldschool/jagexappletviewer.png jagexappletviewer.png
-zip -d jagexappletviewer.jar MacOSXHelpers.class
+https://www.runescape.com/oldschool/download
