@@ -18,7 +18,7 @@ Execute `client.cmd` (Windows Batch file) or `client.command` (Shell script) to 
 
 ### jagexappletviewer
 
-`jagexappletviewer.jar`, `jagexappletviewer.png`, and `legal/jagexappletviewer.LICENCSE` have been extracted from the official Windows client using the following method
+`jagexappletviewer.jar`, `jagexappletviewer.png`, and `legal/jagexappletviewer.LICENSE` have been extracted from the official Windows client using the following method
 
 ```sh
 curl -O https://www.runescape.com/downloads/OldSchool.msi
