@@ -15,3 +15,16 @@ Download as [**.zip**](https://github.com/RuneStar/official-client-portable/arch
 ### Running
 
 Execute `client.cmd` (Windows Batch file) or `client.command` (Shell script) to launch the client
+
+### jagexappletviewer
+
+`jagexappletviewer.jar`, `jagexappletviewer.png`, and `legal/jagexappletviewer.LICENCSE` have been extracted from the official Windows client using the following method
+
+```sh
+curl -O https://www.runescape.com/downloads/OldSchool.msi
+cmd.exe /c "msiexec /a OldSchool.msi /qn TARGETDIR=%cd%\msi"
+cp msi/jagexlauncher/jagexlauncher/bin/jagexappletviewer.jar jagexappletviewer.jar
+cp msi/jagexlauncher/jagexlauncher/oldschool/jagexappletviewer.png jagexappletviewer.png
+cp msi/jagexlauncher/jagexlauncher/LICENSE.txt legal/jagexappletviewer.LICENSE
+zip -d jagexappletviewer.jar MacOSXHelpers.class
+```

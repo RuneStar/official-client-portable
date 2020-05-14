@@ -1,1 +1,4 @@
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0\client.ps1" || pause
+@ECHO OFF
+PUSHD %~dp0
+powershell -NoProfile -ExecutionPolicy Bypass -File "client.ps1" || PAUSE
+POPD

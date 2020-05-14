@@ -6,12 +6,16 @@ download_file() {
 	if command -v curl >/dev/null
 	then
 		curl -Lfo "$@"
-	else
+	elif command -v wget >/dev/null
+	then
 		wget -O "$@"
+	else
+		echo 'missing required command: curl or wget'
+		exit 1
 	fi
 }
 
-cd "$(dirname "$0")"
+cd -- "$(dirname -- "${BASH_SOURCE:-$0}")"
 
 if grep Microsoft /proc/version >/dev/null 2>&1
 then
@@ -32,11 +36,11 @@ case $arch in
 	armv*) arch=arm ;;
 esac
 
-platform="$os-$arch"
+platform=$os-$arch
 case $platform in
 	windows-x64|windows-x32|mac-x64|linux-x64|linux-aarch64|linux-arm) ;;
 	*)
-		echo "Unsupported platform: $platform"
+		echo "unsupported platform: $platform"
 		exit 1
 		;;
 esac
@@ -53,65 +57,54 @@ case $os in
 esac
 
 java_version=11
-
-jre_dir="jre-$java_version-$platform/"
+jre_dir=jre-$platform/
 
 if test ! -d "$jre_dir"
 then
-	temp_dir="temp/"
+	temp_dir=temp/
 	mkdir -p "$temp_dir"
-	
-	temp_jdk_archive="$temp_dir/jdk-$java_version-$platform$archive_extension"
-	if test ! -f "$temp_jdk_archive"
+	jdk_archive=$temp_dir/jdk-$java_version-$platform$archive_extension
+	if test ! -f "jdk_archive"
 	then
-		download_file "$temp_jdk_archive" "https://api.adoptopenjdk.net/v2/binary/releases/openjdk$java_version?openjdk_impl=hotspot&release=latest&type=jdk&heap_size=normal&os=$os&arch=$arch"
+		jdk_archive_url=https://api.adoptopenjdk.net/v3/binary/latest/$java_version/ga/$os/$arch/jdk/hotspot/normal/adoptopenjdk
+		download_file "$jdk_archive" "$jdk_archive_url"
 	fi
-
-	temp_jdk_dir="$temp_dir/jdk-$java_version-$platform/"
-	mkdir -p "$temp_jdk_dir"
+	jdk_dir=$temp_dir/jdk-$java_version-$platform/
+	mkdir -p "$jdk_dir"
 	case $os in
 		windows)
-			unzip -o "$temp_jdk_archive" -d "$temp_jdk_dir"
-			temp_jdk_home="$temp_jdk_dir/$(ls $temp_jdk_dir)"
+			unzip -o "$jdk_archive" -d "$jdk_dir"
+			jdk_home="$jdk_dir/*/"
 			;;
 		linux)
-			tar -zxf "$temp_jdk_archive" --strip-components=1 -C "$temp_jdk_dir"
-			temp_jdk_home="$temp_jdk_dir"
+			tar -zxf "$jdk_archive" -C "$jdk_dir"
+			jdk_home="$jdk_dir/*/"
 			;;
 		mac)
-			tar -zxf "$temp_jdk_archive" --strip-components=1 -C "$temp_jdk_dir"
-			temp_jdk_home="$temp_jdk_dir/Contents/Home"
+			tar -zxf "$jdk_archive" -C "$jdk_dir"
+			jdk_home="$jdk_dir/*/Contents/Home/"
 			;;
 	esac
+	jdk_home=$(set -- $jdk_home; printf %s "$1")
 
-	"$temp_jdk_home/bin/jlink$exe_extension" \
-	 --verbose \
-	 --no-header-files \
-	 --no-man-pages \
-	 --strip-debug \
-	 --compress=2 \
-	 --module-path "$temp_jdk_home/jmods" \
-	 --add-modules java.desktop,java.management \
-	 --output "$jre_dir"
+	"$jdk_home/bin/jlink$exe_extension" \
+		--verbose \
+		--no-header-files \
+		--no-man-pages \
+		--strip-debug \
+		--compress=2 \
+		--module-path "$jdk_home/jmods" \
+		--add-modules java.desktop,java.management \
+		--output "$jre_dir"
 
-	rm -rfv "$temp_dir"
-fi
-
-if test ! -f jagexappletviewer.jar
-then
-	download_file jagexappletviewer.jar http://www.runescape.com/downloads/jagexappletviewer.jar
-fi
-
-if test "$os" = mac
-then
-	zip -d jagexappletviewer.jar MacOSXHelpers.class || true
+	rm -rf "$temp_dir"
 fi
 
 mkdir -p cache
 
 "$jre_dir/bin/java$exe_extension" \
- -Duser.home=cache \
- -Dsun.awt.noerasebackground=true \
- -Dcom.jagex.configuri=jagex-jav://oldschool.runescape.com/jav_config.ws \
- -jar jagexappletviewer.jar \
- "$(basename "$PWD")"
+	-Duser.home=cache \
+	-Dsun.awt.noerasebackground=true \
+	-Dcom.jagex.configuri=jagex-jav://oldschool.runescape.com/jav_config.ws \
+	-jar jagexappletviewer.jar \
+	"$(basename "$PWD")"
